@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <link rel="stylesheet" href="popup.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Voice Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lexend+Zetta:wght@400;600&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            plum: '#1d061a',
+                            neon: '#ff0058',
+                            sky: '#03a9f4',
+                            mint: '#4dff03',
+                            ripple: '#97CEE0'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="container max-w-md w-full glass-panel rounded-3xl p-8 overflow-hidden relative">
+
+        <!-- Theme Toggle -->
+        <div id="theme-toggle" title="Toggle Theme"></div>
+
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <div
+                class="inline-flex items-center justify-center w-16 h-16 bg-brand-neon/10 rounded-2xl mb-4 text-brand-neon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="w-8 h-8 bi bi-brilliance" viewBox="0 0 16 16">
+                    <path
+                        d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16M1 8a7 7 0 0 0 7 7 3.5 3.5 0 1 0 0-7 3.5 3.5 0 1 1 0-7 7 7 0 0 0-7 7" />
+                </svg>
+            </div>
+            <h1
+                class="text-2xl font-bold bg-gradient-to-r from-brand-sky via-brand-neon to-brand-mint bg-clip-text text-transparent">
+                AI Voice Assistant</h1>
+            <p class="text-slate-600 dark:text-slate-400 text-sm mt-1 font-medium">Select text on page and click below
+            </p>
+        </div>
+
+        <!-- Main Action Area -->
+        <div class="space-y-6">
+            <button id="ask-btn" class="voice-pulse">
+                <span class="description">
+                    <span id="btn-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                    </span>
+                    <span id="btn-text">Process Selection</span>
+                    <div id="loader" class="custom-loader hidden"></div>
+                </span>
+            </button>
+
+            <!-- Status Indicator -->
+            <div id="status-box"
+                class="hidden text-center py-2 text-[10px] text-brand-neon uppercase tracking-widest font-bold">
+                <span id="status-message">Thinking...</span>
+            </div>
+
+            <!-- Result Area -->
+            <div id="result-area" class="hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div class="result-box">
+                    <span></span>
+                    <div class="result-content shadow-2xl">
+                        <div class="flex justify-between items-start mb-2">
+                            <h2>AI Response</h2>
+                            <div class="flex gap-3">
+                                <button id="replay-btn" class="text-white hover:text-brand-sky transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="w-5 h-5 bi bi-play-circle" viewBox="0 0 16 16">
+                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                                        <path
+                                            d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445" />
+                                    </svg>
+                                </button>
+                                <button id="stop-btn" class="text-white hover:text-brand-neon transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="w-5 h-5 bi bi-pause-circle" viewBox="0 0 16 16">
+                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                                        <path
+                                            d="M5 6.25a1.25 1.25 0 1 1 2.5 0v3.5a1.25 1.25 0 1 1-2.5 0zm3.5 0a1.25 1.25 0 1 1 2.5 0v3.5a1.25 1.25 0 1 1-2.5 0z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <p id="response-text" class="custom-scrollbar">Processing selection...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Info -->
+        <div class="mt-12 pt-6 border-t border-slate-200 dark:border-white/5 text-center">
+            <p class="text-[10px] text-slate-400 dark:text-slate-500 italic uppercase tracking-[0.3em] font-bold">made
+                by souvik</p>
+        </div>
+    </div>
+
+    <script>
+        const LOCAL_API_URL = "http://127.0.0.1:8000/ask";
+
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+
+        const askBtn = document.getElementById('ask-btn');
+        const btnText = document.getElementById('btn-text');
+        const btnIcon = document.getElementById('btn-icon');
+        const loader = document.getElementById('loader');
+        const statusBox = document.getElementById('status-box');
+        const statusMessage = document.getElementById('status-message');
+        const resultArea = document.getElementById('result-area');
+        const responseText = document.getElementById('response-text');
+        const replayBtn = document.getElementById('replay-btn');
+        const stopBtn = document.getElementById('stop-btn');
+
+        let currentAudio = null;
+        let lastResponse = "";
+
+        // Interactive Theme Switcher
+        themeToggle.addEventListener('click', () => {
+            const isDark = html.classList.toggle('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+
+        // Initialize theme
+        if (localStorage.getItem('theme') === 'light') html.classList.remove('dark');
+
+        // Local API Helper
+        async function callLocalAPI(endpoint, payload) {
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) throw new Error(`Status: ${response.status}`);
+                return await response.json();
+            } catch (e) {
+                console.error("API Call failed", e);
+                throw e;
+            }
+        }
+
+        askBtn.addEventListener('click', async () => {
+            // In a real extension, we might get selection from the active tab via chrome.scripting
+            // For now, we'll try to get it if possible, or fallback.
+            // Since this is likely a popup running in isolation, accessing window.getSelection() directly
+            // only gets selection *inside* the popup. 
+            // Ideally we'd use chrome.tabs.executeScript to get selection, but to keep it simple as per request:
+
+            let textToProcess = "Tell me something interesting about the future of AI.";
+
+            // Attempt to get selection from the active tab if we are in an extension context
+            if (typeof chrome !== 'undefined' && chrome.tabs && chrome.scripting) {
+                try {
+                    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+                    if (tab) {
+                        const result = await chrome.scripting.executeScript({
+                            target: { tabId: tab.id },
+                            func: () => window.getSelection().toString()
+                        });
+                        if (result && result[0] && result[0].result) {
+                            textToProcess = result[0].result.trim() || textToProcess;
+                        }
+                    }
+                } catch (e) {
+                    console.log("Could not get tab selection", e);
+                }
+            } else {
+                // Fallback for local testing outside extension environment
+                const selection = window.getSelection().toString().trim();
+                if (selection) textToProcess = selection;
+            }
+
+
+            setLoading(true);
+            updateStatus("CONNECTING TO LOCAL AI...");
+
+            try {
+                const data = await callLocalAPI(LOCAL_API_URL, { text: textToProcess });
+
+                const response = data.reply || "No response received.";
+                lastResponse = response;
+
+                responseText.textContent = response;
+                resultArea.classList.remove('hidden');
+
+                // Backend doesn't support voice yet, so we skip that part
+                // updateStatus("GENERATING VOICE...");
+                // await playVoice(response);
+                updateStatus("DONE");
+            } catch (err) {
+                console.error(err);
+                if (err.message.includes("Failed to fetch")) {
+                    updateStatus("ERROR: IS SERVER RUNNING?");
+                    responseText.textContent = "Error: Could not connect to local server. Make sure 'app.py' is running on port 8000.";
+                } else {
+                    updateStatus("CONNECTION ERROR");
+                    responseText.textContent = "Error: " + err.message;
+                }
+                resultArea.classList.remove('hidden');
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        // Mock Voice function as backend doesn't support it yet
+        async function playVoice(text) {
+            console.log("Voice generation not supported by current backend.");
+            // Placeholder for future implementation
+        }
+
+        function setLoading(isLoading) {
+            if (isLoading) {
+                btnText.classList.add('hidden');
+                btnIcon.classList.add('hidden');
+                loader.classList.remove('hidden');
+                askBtn.style.pointerEvents = 'none';
+            } else {
+                btnText.classList.remove('hidden');
+                btnIcon.classList.remove('hidden');
+                loader.classList.add('hidden');
+                askBtn.style.pointerEvents = 'auto';
+            }
+        }
+
+        function updateStatus(msg) {
+            statusBox.classList.toggle('hidden', !msg);
+            statusMessage.textContent = msg;
+        }
+
+        replayBtn.addEventListener('click', () => {
+            if (lastResponse) {
+                // playVoice(lastResponse);
+                alert("Voice playback not available with this backend yet.");
+            }
+        });
+
+        stopBtn.addEventListener('click', () => {
+            if (currentAudio) {
+                currentAudio.pause();
+                askBtn.classList.remove('active');
+            }
+        });
+    </script>
+    <script src="popup.cjs"></script>
+</body>
+
+</html>
