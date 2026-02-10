@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal Agreement Analyzer - Documentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #e8eaf6;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        h1 {
+            font-size: 48px;
+            background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: #b0b8c4;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: rgba(15, 52, 96, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 16px;
+            padding: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(255, 215, 0, 0.2);
+            border-color: rgba(255, 215, 0, 0.4);
+        }
+
+        .card h2 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        .card p {
+            color: #cbd5e1;
+            margin-bottom: 15px;
+        }
+
+        .card a {
+            display: inline-block;
+            color: #ffd700;
+            text-decoration: none;
+            font-weight: 600;
+            border-bottom: 2px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        .card a:hover {
+            border-bottom-color: #ffd700;
+        }
+
+        .features {
+            background: rgba(15, 52, 96, 0.4);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+
+        .features h2 {
+            color: #ffd700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .features ul {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .features li {
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .quickstart {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+
+        .quickstart h2 {
+            color: #4ade80;
+            margin-bottom: 20px;
+        }
+
+        .quickstart ol {
+            padding-left: 25px;
+        }
+
+        .quickstart li {
+            margin-bottom: 10px;
+        }
+
+        footer {
+            text-align: center;
+            color: #64748b;
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 215, 0, 0.1);
+        }
+
+        code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #fbbf24;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>⚖️ Legal Agreement Analyzer</h1>
+            <p class="subtitle">AI-Powered Contract Intelligence Chrome Extension</p>
+        </header>
+
+        <div class="quickstart">
+            <h2>🚀 Quick Start</h2>
+            <ol>
+                <li>Install dependencies: <code>cd backend && pip install -r requirements.txt</code></li>
+                <li>Add your Google API key to <code>backend/.env</code></li>
+                <li>Start backend: <code>uvicorn api:app --reload --port 8000</code></li>
+                <li>Load extension in Chrome from <code>extension</code> folder</li>
+                <li>Upload a legal document and start asking questions!</li>
+            </ol>
+        </div>
+
+        <div class="features">
+            <h2>✨ Features</h2>
+            <ul>
+                <li>Upload PDF and TXT legal documents</li>
+                <li>AI-powered contract analysis</li>
+                <li>Natural language Q&A</li>
+                <li>Context-aware responses</li>
+                <li>Premium UI with animations</li>
+                <li>Document persistence</li>
+                <li>Drag & drop support</li>
+                <li>Legal-optimized prompts</li>
+                <li>Fast vector search</li>
+                <li>Production-ready code</li>
+            </ul>
+        </div>
+
+        <div class="cards">
+            <div class="card">
+                <h2>📖 README</h2>
+                <p>Complete documentation with installation instructions, architecture details, and troubleshooting.</p>
+                <a href="README.md">Read Documentation →</a>
+            </div>
+
+            <div class="card">
+                <h2>⚡ Quick Start</h2>
+                <p>Get up and running in 5 minutes with this fast setup guide.</p>
+                <a href="QUICKSTART.md">Start Here →</a>
+            </div>
+
+            <div class="card">
+                <h2>🧪 Testing Guide</h2>
+                <p>Comprehensive testing checklist with example questions and validation steps.</p>
+                <a href="TESTING.md">View Tests →</a>
+            </div>
+
+            <div class="card">
+                <h2>🚀 Deployment</h2>
+                <p>Step-by-step guide for deploying backend and publishing extension.</p>
+                <a href="DEPLOYMENT.md">Deploy Now →</a>
+            </div>
+
+            <div class="card">
+                <h2>📊 Project Summary</h2>
+                <p>Overview of features, architecture, tech stack, and next steps.</p>
+                <a href="PROJECT_SUMMARY.md">View Summary →</a>
+            </div>
+
+            <div class="card">
+                <h2>📝 Sample Agreement</h2>
+                <p>Test legal agreement for trying out the analyzer.</p>
+                <a href="sample_agreement.txt">View Sample →</a>
+            </div>
+        </div>
+
+        <div class="features">
+            <h2>🛠️ Tech Stack</h2>
+            <ul>
+                <li>FastAPI (Backend)</li>
+                <li>Google Gemini 2.0</li>
+                <li>LangChain (RAG)</li>
+                <li>ChromaDB (Vector Store)</li>
+                <li>HuggingFace (Embeddings)</li>
+                <li>PyPDF2 (PDF Processing)</li>
+                <li>Chrome Extension (Frontend)</li>
+                <li>Vanilla JavaScript</li>
+            </ul>
+        </div>
+
+        <footer>
+            <p>Built with ❤️ for Legal Professionals</p>
+            <p>AI-Powered | Production-Ready | Open Source</p>
+        </footer>
+    </div>
+</body>
+
+</html>

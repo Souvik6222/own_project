@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            width: 420px;
+            min-height: 600px;
+            padding: 0;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #e8eaf6;
+            overflow-x: hidden;
+        }
+
+        /* Risk Dashboard */
+        .risk-dashboard {
+            display: none;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .risk-gauge-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        /* Gauge Chart */
+        .gauge {
+            width: 160px;
+            height: 80px;
+            /* Half circle */
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gauge-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 15px solid rgba(255, 255, 255, 0.1);
+            border-bottom-color: transparent !important;
+            border-right-color: transparent !important;
+            transform: rotate(-45deg);
+        }
+
+        .gauge-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 15px solid transparent;
+            border-top-color: #ffd700;
+            border-left-color: #ffd700;
+            transform: rotate(-45deg);
+            /* Start position */
+            transform-origin: center;
+            transition: transform 1.5s cubic-bezier(0.1, 0.7, 1.0, 0.1);
+            z-index: 2;
+        }
+
+        .gauge-value {
+            position: absolute;
+            bottom: 0px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 32px;
+            font-weight: 800;
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .gauge-label {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #b0b8c4;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .risk-section {
+            background: rgba(15, 52, 96, 0.4);
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .risk-section h3 {
+            font-size: 14px;
+            color: #ffd700;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+            padding-bottom: 8px;
+        }
+
+        .risk-item {
+            margin-bottom: 12px;
+            padding-left: 12px;
+            border-left: 2px solid;
+        }
+
+        .risk-item.high {
+            border-color: #ef4444;
+        }
+
+        .risk-item.medium {
+            border-color: #f59e0b;
+        }
+
+        .risk-item.low {
+            border-color: #22c55e;
+        }
+
+        .risk-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #e2e8f0;
+            margin-bottom: 2px;
+        }
+
+        .risk-desc {
+            font-size: 12px;
+            color: #94a3b8;
+            line-height: 1.4;
+        }
+
+        .detailed-analysis {
+            font-size: 13px;
+            color: #cbd5e1;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .analyze-btn {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            background: rgba(255, 215, 0, 0.1);
+            color: #ffd700;
+            transition: all 0.3s ease;
+            display: none;
+            /* Hidden until doc uploaded */
+        }
+
+        .analyze-btn:hover {
+            background: rgba(255, 215, 0, 0.2);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container {
+            padding: 24px;
+            position: relative;
+        }
+
+        /* Animated legal-themed background */
+        .bg-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(220, 165, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(220, 165, 0, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        .header {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            font-size: 22px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffa500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+            text-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 12px;
+            color: #b0b8c4;
+            font-weight: 500;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            position: relative;
+            z-index: 1;
+            margin-bottom: 20px;
+        }
+
+        .upload-area {
+            border: 2px dashed rgba(255, 215, 0, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            background: rgba(15, 52, 96, 0.4);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-area:hover {
+            border-color: rgba(255, 215, 0, 0.6);
+            background: rgba(15, 52, 96, 0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(255, 215, 0, 0.15);
+        }
+
+        .upload-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .upload-area:hover::before {
+            left: 100%;
+        }
+
+        .upload-icon {
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+
+        .upload-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffd700;
+            margin-bottom: 6px;
+        }
+
+        .upload-hint {
+            font-size: 11px;
+            color: #78849e;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        /* Document Info */
+        .doc-info {
+            display: none;
+            background: rgba(22, 33, 62, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .doc-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #ffd700;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .doc-stats {
+            font-size: 11px;
+            color: #94a3b8;
+            display: flex;
+            gap: 12px;
+        }
+
+        .delete-btn {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: all 0.2s;
+        }
+
+        .delete-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+            transform: scale(1.02);
+        }
+
+        /* Question Section */
+        .question-section {
+            position: relative;
+            z-index: 1;
+            margin-bottom: 16px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            background: rgba(15, 52, 96, 0.4);
+            backdrop-filter: blur(10px);
+            color: #e8eaf6;
+            outline: none;
+            font-size: 13px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 80px;
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus {
+            border-color: rgba(255, 215, 0, 0.5);
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1), 0 4px 12px rgba(0, 0, 0, 0.3);
+            transform: translateY(-1px);
+        }
+
+        textarea::placeholder {
+            color: #64748b;
+        }
+
+        button.ask-btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 15px;
+            background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+            color: #1a1a2e;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        button.ask-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        button.ask-btn:hover::before {
+            left: 100%;
+        }
+
+        button.ask-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(255, 215, 0, 0.4);
+        }
+
+        button.ask-btn:active {
+            transform: translateY(0);
+        }
+
+        button.ask-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Chat Area */
+        .chat {
+            margin-top: 16px;
+            max-height: 240px;
+            overflow-y: auto;
+            padding-right: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .chat::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat::-webkit-scrollbar-track {
+            background: rgba(22, 33, 62, 0.3);
+            border-radius: 10px;
+        }
+
+        .chat::-webkit-scrollbar-thumb {
+            background: rgba(255, 215, 0, 0.4);
+            border-radius: 10px;
+        }
+
+        .chat::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 215, 0, 0.6);
+        }
+
+        .msg {
+            margin-bottom: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            line-height: 1.6;
+            animation: slideIn 0.3s ease;
+            word-wrap: break-word;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .user {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 165, 0, 0.15));
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            text-align: right;
+            margin-left: 40px;
+        }
+
+        .bot {
+            background: rgba(15, 52, 96, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            margin-right: 40px;
+        }
+
+        .error {
+            color: #fca5a5;
+            font-size: 12px;
+            margin-top: 10px;
+            text-align: center;
+            padding: 10px;
+            background: rgba(239, 68, 68, 0.15);
+            border-radius: 10px;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            position: relative;
+            z-index: 1;
+            animation: shake 0.3s ease;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        .loading {
+            font-size: 13px;
+            color: #ffd700;
+            text-align: center;
+            margin-top: 10px;
+            position: relative;
+            z-index: 1;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+
+        @keyframes dots {
+
+            0%,
+            20% {
+                content: '.';
+            }
+
+            40% {
+                content: '..';
+            }
+
+            60%,
+            100% {
+                content: '...';
+            }
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-ready {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .badge-processing {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-pattern"></div>
+    <div class="container">
+        <div class="header">
+            <h1>⚖️ Legal Agreement Analyzer</h1>
+            <p class="subtitle">AI-Powered Contract Intelligence</p>
+        </div>
+
+        <!-- Upload Section -->
+        <div class="upload-section">
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">📄</div>
+                <div class="upload-text">Click to Upload Agreement</div>
+                <div class="upload-hint">PDF or TXT files accepted</div>
+            </div>
+            <input type="file" id="fileInput" accept=".pdf,.txt" />
+        </div>
+
+        <!-- Document Info & Analyze Button -->
+        <div id="docInfo" class="doc-info">
+            <div class="doc-name">
+                <span>📋</span>
+                <span id="docName">No document loaded</span>
+            </div>
+            <div class="doc-stats">
+                <span id="docStats"></span>
+            </div>
+
+            <button class="analyze-btn" id="analyzeBtn" style="margin-top: 12px;">📊 Run Detailed Risk Analysis</button>
+
+            <button class="delete-btn" id="deleteBtn">🗑️ Remove Document</button>
+        </div>
+
+        <!-- Risk Dashboard -->
+        <div id="riskDashboard" class="risk-dashboard">
+            <div class="risk-gauge-container">
+                <div class="gauge">
+                    <div class="gauge-bg"></div>
+                    <div class="gauge-fill" id="gaugeFill"></div>
+                    <div class="gauge-value" id="riskScore">0%</div>
+                </div>
+                <div class="gauge-label">Risk Level: <span id="riskLevel" style="color: #fff">Calculating...</span>
+                </div>
+            </div>
+
+            <div class="risk-section">
+                <h3>🔍 Key Risk Points</h3>
+                <div id="keyRisksList"></div>
+            </div>
+
+            <div class="risk-section">
+                <h3>📝 Detailed Analysis</h3>
+                <div id="detailedAnalysis" class="detailed-analysis"></div>
+            </div>
+        </div>
+
+        <!-- Question Section -->
+        <div class="question-section">
+            <textarea id="question"
+                placeholder="Ask about clauses, obligations, risks, termination terms, liability, payment terms, etc..."></textarea>
+        </div>
+
+        <button class="ask-btn" id="askBtn" disabled>
+            <span id="btnText">Upload Document First</span>
+        </button>
+
+        <div id="status" class="loading" style="display:none;"></div>
+        <div id="error" class="error" style="display:none;"></div>
+
+        <!-- Chat Area -->
+        <div id="chat" class="chat"></div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+
+</html>

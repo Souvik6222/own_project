@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+python-dotenv
+python-multipart
+
+# LangChain and AI
+langchain
+langchain-google-genai
+langchain-community
+
+# PDF Processing
+PyPDF2
+
+# Vector Store & Embeddings
+chromadb
+sentence-transformers

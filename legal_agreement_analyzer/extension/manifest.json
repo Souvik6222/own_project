@@ -1,0 +1,15 @@
+{
+    "manifest_version": 3,
+    "name": "Legal Agreement Analyzer",
+    "version": "1.0",
+    "description": "AI-powered legal document analysis - Upload contracts and get instant answers",
+    "action": {
+        "default_popup": "popup.html"
+    },
+    "permissions": [
+        "storage"
+    ],
+    "host_permissions": [
+        "http://localhost:8000/*"
+    ]
+}
