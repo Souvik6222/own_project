@@ -9,6 +9,19 @@ const docStats = document.getElementById("docStats");
 const deleteBtn = document.getElementById("deleteBtn");
 const analyzeBtn = document.getElementById("analyzeBtn");
 
+// New Mode Elements
+const modeUpload = document.getElementById("modeUpload");
+const modePaste = document.getElementById("modePaste");
+const modeTab = document.getElementById("modeTab");
+
+const uploadSection = document.getElementById("uploadSection");
+const pasteSection = document.getElementById("pasteSection");
+const tabSection = document.getElementById("tabSection");
+
+const pasteText = document.getElementById("pasteText");
+const processTextBtn = document.getElementById("processTextBtn");
+const processTabBtn = document.getElementById("processTabBtn");
+
 const riskDashboard = document.getElementById("riskDashboard");
 const gaugeFill = document.getElementById("gaugeFill");
 const riskScore = document.getElementById("riskScore");
@@ -41,6 +54,40 @@ chrome.storage.local.get(['documentId', 'filename', 'analysisData'], (result) =>
     }
 });
 
+// Mode Toggles
+modeUpload.addEventListener("click", () => {
+    setMode("upload");
+});
+
+modePaste.addEventListener("click", () => {
+    setMode("paste");
+});
+
+modeTab.addEventListener("click", () => {
+    setMode("tab");
+});
+
+function setMode(mode) {
+    modeUpload.classList.remove("active");
+    modePaste.classList.remove("active");
+    modeTab.classList.remove("active");
+
+    uploadSection.style.display = "none";
+    pasteSection.style.display = "none";
+    tabSection.style.display = "none";
+
+    if (mode === "upload") {
+        modeUpload.classList.add("active");
+        uploadSection.style.display = "block";
+    } else if (mode === "paste") {
+        modePaste.classList.add("active");
+        pasteSection.style.display = "block";
+    } else if (mode === "tab") {
+        modeTab.classList.add("active");
+        tabSection.style.display = "block";
+    }
+}
+
 // Upload Area Click
 uploadArea.addEventListener("click", () => {
     fileInput.click();
@@ -54,6 +101,63 @@ fileInput.addEventListener("change", async (e) => {
     await uploadDocument(file);
     fileInput.value = ""; // Reset input
 });
+
+// Paste Text Process
+processTextBtn.addEventListener("click", async () => {
+    const text = pasteText.value.trim();
+    if (!text) {
+        showError("Please enter some text to analyze");
+        return;
+    }
+
+    await processPastedText(text, "Pasted_Agremeent.txt");
+});
+
+// Analyze Current Tab
+processTabBtn.addEventListener("click", async () => {
+    hideError();
+    setLoading(true, "Extracting page content...");
+
+    try {
+        if (!chrome.scripting) {
+            throw new Error("Scripting API not available. Please reload the extension in chrome://extensions to enable new permissions.");
+        }
+
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
+        if (!tab) {
+            throw new Error("No active tab found");
+        }
+
+        // Execute script to get text
+        const result = await chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            func: () => {
+                // Get visible text, basic cleanup
+                return document.body.innerText;
+            }
+        });
+
+        if (!result || !result[0] || !result[0].result) {
+            throw new Error("Failed to extract text from page");
+        }
+
+        const pageText = result[0].result;
+        const pageTitle = tab.title || "Webpage_Content.txt";
+
+        if (pageText.length < 100) {
+            throw new Error("Page content is too short to analyze.");
+        }
+
+        await processPastedText(pageText, pageTitle);
+
+    } catch (err) {
+        console.error("Tab analysis error:", err);
+        showError("Failed to analyze page: " + err.message);
+        setLoading(false);
+    }
+});
+
 
 // Drag and Drop
 uploadArea.addEventListener("dragover", (e) => {
@@ -76,6 +180,64 @@ uploadArea.addEventListener("drop", async (e) => {
         showError("Please drop a PDF or TXT file");
     }
 });
+
+// Process Pasted Text
+async function processPastedText(text, filename = "Pasted_Agreement.txt") {
+    hideError();
+    setLoading(true, "Processing text...");
+
+    // Clear previous analysis
+    riskDashboard.style.display = 'none';
+    chrome.storage.local.remove(['analysisData']);
+
+    try {
+        const response = await fetch(`${API_URL}/upload_text`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                text: text,
+                filename: filename
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.detail || "Processing failed");
+        }
+
+        currentDocumentId = data.document_id;
+        currentFilename = data.filename;
+
+        // Save to storage
+        chrome.storage.local.set({
+            documentId: currentDocumentId,
+            filename: currentFilename
+        });
+
+        updateUIAfterUpload(data.filename, `${data.num_chunks} sections analyzed`);
+        analyzeBtn.style.display = 'block';
+        addMessage(`Text processed successfully! You can now analyze risks.`, "bot");
+
+        // Switch back to upload mode view generally or just hide paste area?
+        // Let's hide the input area to show result is loaded
+        pasteText.value = "";
+
+    } catch (err) {
+        console.error("Text process error:", err);
+        let errorMessage = "Failed to process text.";
+
+        if (err.message.includes("Failed to fetch")) {
+            errorMessage = "Server not running! Please start the backend server.";
+        } else if (err.message) {
+            errorMessage = err.message;
+        }
+
+        showError(errorMessage);
+    } finally {
+        setLoading(false);
+    }
+}
 
 // Upload Document Function
 async function uploadDocument(file) {
@@ -112,14 +274,14 @@ async function uploadDocument(file) {
 
         updateUIAfterUpload(data.filename, `${data.num_chunks} sections analyzed`);
         analyzeBtn.style.display = 'block'; // Show analyze button
-        addMessage(`✅ Document "${data.filename}" uploaded successfully! You can now ask questions or run a risk analysis.`, "bot");
+        addMessage(`Document "${data.filename}" uploaded successfully! You can now ask questions or run a risk analysis.`, "bot");
 
     } catch (err) {
         console.error("Upload error:", err);
         let errorMessage = "Failed to upload document.";
 
         if (err.message.includes("Failed to fetch")) {
-            errorMessage = "⚠️ Server not running! Please start the backend server on port 8000.";
+            errorMessage = "Server not running! Please start the backend server on port 8000.";
         } else if (err.message) {
             errorMessage = err.message;
         }
@@ -321,7 +483,7 @@ askBtn.addEventListener("click", async () => {
         let errorMessage = "Failed to process question.";
 
         if (err.message.includes("Failed to fetch")) {
-            errorMessage = "⚠️ Server not running! Please start the backend server.";
+            errorMessage = "Server not running! Please start the backend server.";
         } else if (err.message.includes("Document not found")) {
             errorMessage = "Document expired. Please re-upload.";
             currentDocumentId = null;
@@ -331,7 +493,7 @@ askBtn.addEventListener("click", async () => {
         }
 
         showError(errorMessage);
-        addMessage(`❌ Error: ${errorMessage}`, "bot");
+        addMessage(`Error: ${errorMessage}`, "bot");
 
     } finally {
         setLoading(false);

@@ -154,6 +154,57 @@ async def upload_document(file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing document: {str(e)}")
 
+class TextSubmission(BaseModel):
+    text: str
+    filename: Optional[str] = "Pasted_Text.txt"
+
+@app.post("/upload_text")
+def upload_text(submission: TextSubmission):
+    """Process directly pasted text"""
+    try:
+        text = submission.text
+        filename = submission.filename
+        
+        if not text.strip():
+            raise ValueError("Text is empty")
+            
+        # Split into chunks
+        splitter = RecursiveCharacterTextSplitter(
+            chunk_size=1000,
+            chunk_overlap=200,
+            separators=["\n\n", "\n", ". ", " ", ""]
+        )
+        chunks = splitter.create_documents([text])
+        
+        # Create vector store
+        vector_store = Chroma.from_documents(
+            documents=chunks,
+            embedding=embeddings
+        )
+        
+        # Generate document ID
+        doc_id = f"text_{os.urandom(4).hex()}"
+        
+        # Store the vector store and text
+        document_store[doc_id] = {
+            'vector_store': vector_store,
+            'filename': filename,
+            'text': text,
+            'text_length': len(text),
+            'num_chunks': len(chunks)
+        }
+        
+        return {
+            "document_id": doc_id,
+            "filename": filename,
+            "text_length": len(text),
+            "num_chunks": len(chunks),
+            "message": "Text processed successfully"
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error processing text: {str(e)}")
+
 @app.post("/analyze_risk")
 def analyze_risk_assessment(q: Query):
     """Perform a comprehensive risk analysis on the document"""

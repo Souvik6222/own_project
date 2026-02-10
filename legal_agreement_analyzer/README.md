@@ -73,24 +73,29 @@ An AI-powered Chrome extension for analyzing legal documents and contracts. Uplo
 
 ## 📖 How to Use
 
-### Step 1: Upload Document
+## 📖 How to Use
+
+### Option 1: Upload Document
+- Click "Upload File" toggle
 - Click the upload area or drag & drop a PDF/TXT file
 - Supported files: Legal contracts, agreements, terms & conditions
 
-### Step 2: Ask Questions
-Examples of questions you can ask:
-- "What are the payment terms?"
-- "What are the termination clauses?"
-- "Are there any liability limitations?"
-- "What are the key obligations of each party?"
-- "What are the potential risks in this agreement?"
-- "What happens if there's a breach of contract?"
-- "What are the confidentiality requirements?"
+### Option 2: Paste Text
+- Click "Paste Text" toggle
+- Paste any legal text directly into the text area
+- Click "Process Text"
 
-### Step 3: Get Answers
-- The AI analyzes your document using RAG (Retrieval Augmented Generation)
-- Responses are based only on your uploaded document
-- Plain language explanations of legal terms
+### Option 3: Analyze Current Tab (New!)
+- Click "Current Tab" toggle
+- Navigate to any webpage (e.g. Terms of Service)
+- Click "Analyze This Page" to instantly process the page content
+
+### Step 2: Risk Analysis & Q&A
+- **Risk Dashboard**: Click "Run Detailed Risk Analysis" to see a visual risk score and key issues.
+- **Chat**: Ask specific questions like:
+  - "What are the payment terms?"
+  - "What are the termination clauses?"
+  - "Are there any liability limitations?"
 
 ## 🏗️ Architecture
 
@@ -104,7 +109,7 @@ Examples of questions you can ask:
 **Tech Stack:**
 - **FastAPI** - High-performance web framework
 - **LangChain** - RAG pipeline orchestration
-- **Google Gemini 2.0** - Language model for analysis
+- **Google Gemini 2.5** - Language model for analysis
 - **ChromaDB** - Vector database for document chunks
 - **HuggingFace** - Sentence transformers for embeddings
 - **PyPDF2** - PDF text extraction
@@ -122,7 +127,9 @@ Examples of questions you can ask:
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/upload` | POST | Upload PDF/TXT document |
+| `/upload_text` | POST | Upload raw text for analysis |
 | `/ask` | POST | Ask question about document |
+| `/analyze_risk` | POST | Get detailed risk report (JSON) |
 | `/documents` | GET | List uploaded documents |
 | `/documents/{id}` | DELETE | Delete a document |
 
@@ -134,13 +141,13 @@ curl -X POST http://localhost:8000/upload \
   -F "file=@contract.pdf"
 ```
 
-**Ask Question:**
+**Analyze Risk:**
 ```bash
-curl -X POST http://localhost:8000/ask \
+curl -X POST http://localhost:8000/analyze_risk \
   -H "Content-Type: application/json" \
   -d '{
     "document_id": "contract_pdf",
-    "question": "What are the payment terms?"
+    "question": "risk"
   }'
 ```
 

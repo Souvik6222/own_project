@@ -4,24 +4,25 @@
 
 A production-ready **AI-powered Chrome Extension** for analyzing legal documents and contracts.
 
+### Key Features
+- **📄 Document Upload**: Support for PDF and TXT files.
+- **📋 Text Input**: Paste legal text directly for instant analysis.
+- **🌐 Tab Analysis**: One-click analysis of the current browser tab (perfect for Terms of Service).
+- **📊 Risk Dashboard**:
+  - Visual Risk Score (0-100% Gauge).
+  - Key Risk Points with severity levels (High/Medium/Low).
+  - Detailed AI Analysis.
+- **💬 Legal Chatbot**: Ask specific questions about the document (e.g., "What is the termination clause?").
+- **🔒 Privacy First**: Documents are processed in-memory and not stored permanently.
+
 ### ✨ Key Features Created
 
-1. **📄 Document Upload**
-   - Drag & drop or click to upload
-   - Supports PDF and TXT files
-   - Automatic text extraction from PDFs
-   - Document persistence across sessions
-
-2. **🤖 AI Analysis**
+1. **🤖 AI Analysis**
    - Google Gemini 2.0 Flash for intelligent contract analysis
    - RAG (Retrieval Augmented Generation) pipeline
    - Context-aware answers based only on uploaded document
    - Optimized for legal terminology and clause analysis
 
-3. **💬 Interactive Chat**
-   - Natural language question answering
-   - Chat history with user/bot messages
-   - Real-time loading states
    - Clear error messages
 
 4. **🎨 Premium UI**
