@@ -1,19 +1,33 @@
 <![CDATA[<div align="center">
 
-# ⚖️ Legal Agreement Analyzer
+<h1>⚖️ Legal Agreement Analyzer</h1>
 
-### AI-Powered Chrome Extension for Contract Risk Analysis
+<h3>AI-Powered Chrome Extension for Contract Risk Analysis</h3>
 
-[![Python](https://img.shields.io/badge/Python-3.8+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
-[![Google Gemini](https://img.shields.io/badge/Gemini_2.5_Flash-AI-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev)
-[![Chrome Extension](https://img.shields.io/badge/Chrome-Extension_MV3-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white)](https://developer.chrome.com/docs/extensions/)
-[![LangChain](https://img.shields.io/badge/LangChain-RAG-1C3C3C?style=for-the-badge&logo=langchain&logoColor=white)](https://python.langchain.com/)
-[![License](https://img.shields.io/badge/License-MIT-gold?style=for-the-badge)](LICENSE)
+<p>
+<a href="https://python.org" target="_blank">
+  <img src="https://img.shields.io/badge/Python-3.8+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
+</a>
+<a href="https://fastapi.tiangolo.com" target="_blank">
+  <img src="https://img.shields.io/badge/FastAPI-0.100+-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI">
+</a>
+<a href="https://ai.google.dev" target="_blank">
+  <img src="https://img.shields.io/badge/Gemini_2.5_Flash-AI-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Gemini AI">
+</a>
+<a href="https://developer.chrome.com/docs/extensions/" target="_blank">
+  <img src="https://img.shields.io/badge/Chrome-Extension_MV3-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Chrome Extension">
+</a>
+<a href="https://python.langchain.com/" target="_blank">
+  <img src="https://img.shields.io/badge/LangChain-RAG-1C3C3C?style=for-the-badge&logo=langchain&logoColor=white" alt="LangChain">
+</a>
+<a href="LICENSE" target="_blank">
+  <img src="https://img.shields.io/badge/License-MIT-gold?style=for-the-badge" alt="License">
+</a>
+</p>
 
----
-
-*Upload legal contracts (PDF/TXT), paste text, or analyze any webpage — get instant AI-powered risk scores, clause breakdowns, and natural language Q&A.*
+<p>
+  <em>Upload legal contracts (PDF/TXT), paste text, or analyze any webpage — get instant AI-powered risk scores, clause breakdowns, and natural language Q&A.</em>
+</p>
 
 </div>
 
@@ -106,7 +120,6 @@
 │  │  ┌──────────┐   ┌───────────┐  ┌──────────┐ │   │
 │  │  │ PyPDF2   │   │ LangChain │  │ Gemini   │ │   │
 │  │  │ Text     │   │ RAG Chain │  │ 2.5 Flash│ │   │
-│  │  │ Splitter │   │           │  │          │ │   │
 │  │  └──────────┘   └─────┬─────┘  └──────────┘ │   │
 │  │                       │                      │   │
 │  │                 ┌─────▼─────┐                │   │

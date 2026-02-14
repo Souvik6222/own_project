@@ -1,18 +1,30 @@
 <![CDATA[<div align="center">
 
-# 🎙️ Text-to-Voice LLM Extension
+<h1>🎙️ Text-to-Voice LLM Extension</h1>
 
-### Chrome Extension that Reads Selected Text with AI + Voice
+<h3>Chrome Extension that Reads Selected Text with AI + Voice</h3>
 
-[![Python](https://img.shields.io/badge/Python-3.8+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
-[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
-[![Ollama](https://img.shields.io/badge/Ollama-Llama3-000000?style=for-the-badge&logo=meta&logoColor=white)](https://ollama.com)
-[![Chrome Extension](https://img.shields.io/badge/Chrome-Extension_MV3-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white)](https://developer.chrome.com/docs/extensions/)
-[![License](https://img.shields.io/badge/License-MIT-gold?style=for-the-badge)](LICENSE)
+<p>
+<a href="https://python.org" target="_blank">
+  <img src="https://img.shields.io/badge/Python-3.8+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
+</a>
+<a href="https://fastapi.tiangolo.com" target="_blank">
+  <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI">
+</a>
+<a href="https://ollama.com" target="_blank">
+  <img src="https://img.shields.io/badge/Ollama-Llama3-000000?style=for-the-badge&logo=meta&logoColor=white" alt="Ollama">
+</a>
+<a href="https://developer.chrome.com/docs/extensions/" target="_blank">
+  <img src="https://img.shields.io/badge/Chrome-Extension_MV3-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Chrome Extension">
+</a>
+<a href="LICENSE" target="_blank">
+  <img src="https://img.shields.io/badge/License-MIT-gold?style=for-the-badge" alt="License">
+</a>
+</p>
 
----
-
-*Select any text on a webpage, send it to a local LLM, and hear the AI response spoken aloud — all from a beautiful Chrome extension popup.*
+<p>
+  <em>Select any text on a webpage, send it to a local LLM, and hear the AI response spoken aloud — all from a beautiful Chrome extension popup.</em>
+</p>
 
 </div>
 

@@ -1,18 +1,30 @@
 <![CDATA[<div align="center">
 
-# 🚀 AI-Powered Chrome Extensions Portfolio
+<h1>🚀 AI-Powered Chrome Extensions Portfolio</h1>
 
-### A Collection of Intelligent Browser Extensions Built with LLMs, RAG, and Modern Web APIs
+<h3>A Collection of Intelligent Browser Extensions Built with LLMs, RAG, and Modern Web APIs</h3>
 
-[![Python](https://img.shields.io/badge/Python-3.8+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
-[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
-[![Google Gemini](https://img.shields.io/badge/Gemini-AI-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev)
-[![LangChain](https://img.shields.io/badge/LangChain-RAG-1C3C3C?style=for-the-badge&logo=langchain&logoColor=white)](https://python.langchain.com/)
-[![Chrome](https://img.shields.io/badge/Chrome-Extensions-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white)](https://developer.chrome.com/docs/extensions/)
+<p>
+<a href="https://python.org" target="_blank">
+  <img src="https://img.shields.io/badge/Python-3.8+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
+</a>
+<a href="https://fastapi.tiangolo.com" target="_blank">
+  <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI">
+</a>
+<a href="https://ai.google.dev" target="_blank">
+  <img src="https://img.shields.io/badge/Gemini-AI-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Gemini">
+</a>
+<a href="https://python.langchain.com/" target="_blank">
+  <img src="https://img.shields.io/badge/LangChain-RAG-1C3C3C?style=for-the-badge&logo=langchain&logoColor=white" alt="LangChain">
+</a>
+<a href="https://developer.chrome.com/docs/extensions/" target="_blank">
+  <img src="https://img.shields.io/badge/Chrome-Extensions-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Chrome">
+</a>
+</p>
 
----
-
-*Three production-ready Chrome extensions showcasing AI/ML integration — from contract analysis to video Q&A to voice-powered assistants.*
+<p>
+  <em>Three production-ready Chrome extensions showcasing AI/ML integration — from contract analysis to video Q&A to voice-powered assistants.</em>
+</p>
 
 </div>
 
