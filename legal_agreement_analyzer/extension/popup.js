@@ -36,6 +36,18 @@ const chatDiv = document.getElementById("chat");
 const statusDiv = document.getElementById("status");
 const errorDiv = document.getElementById("error");
 
+// Initial Entry Animation
+document.addEventListener('DOMContentLoaded', () => {
+    anime({
+        targets: ['.header', '.toggle-container', '.glass-panel'],
+        translateY: [20, 0],
+        opacity: [0, 1],
+        delay: anime.stagger(100),
+        easing: 'easeOutExpo',
+        duration: 1200
+    });
+});
+
 // State
 let currentDocumentId = null;
 let currentFilename = null;
@@ -55,36 +67,57 @@ chrome.storage.local.get(['documentId', 'filename', 'analysisData'], (result) =>
 });
 
 // Mode Toggles
-modeUpload.addEventListener("click", () => {
-    setMode("upload");
-});
-
-modePaste.addEventListener("click", () => {
-    setMode("paste");
-});
-
-modeTab.addEventListener("click", () => {
-    setMode("tab");
-});
+modeUpload.addEventListener("click", () => setMode("upload"));
+modePaste.addEventListener("click", () => setMode("paste"));
+modeTab.addEventListener("click", () => setMode("tab"));
 
 function setMode(mode) {
-    modeUpload.classList.remove("active");
-    modePaste.classList.remove("active");
-    modeTab.classList.remove("active");
+    const modes = {
+        upload: { btn: modeUpload, section: uploadSection },
+        paste: { btn: modePaste, section: pasteSection },
+        tab: { btn: modeTab, section: tabSection }
+    };
 
-    uploadSection.style.display = "none";
-    pasteSection.style.display = "none";
-    tabSection.style.display = "none";
+    // Update Buttons
+    Object.values(modes).forEach(m => m.btn.classList.remove("active"));
+    modes[mode].btn.classList.add("active");
 
-    if (mode === "upload") {
-        modeUpload.classList.add("active");
-        uploadSection.style.display = "block";
-    } else if (mode === "paste") {
-        modePaste.classList.add("active");
-        pasteSection.style.display = "block";
-    } else if (mode === "tab") {
-        modeTab.classList.add("active");
-        tabSection.style.display = "block";
+    // Animate Sections
+    const currentVisible = [uploadSection, pasteSection, tabSection].find(s => s.style.display !== 'none' && !s.classList.contains('hidden'));
+    const nextSection = modes[mode].section;
+
+    if (currentVisible === nextSection) return;
+
+    if (currentVisible) {
+        anime({
+            targets: currentVisible,
+            opacity: 0,
+            translateY: -10,
+            duration: 300,
+            easing: 'easeInQuad',
+            complete: () => {
+                currentVisible.style.display = 'none';
+                currentVisible.classList.add('hidden');
+
+                nextSection.style.display = 'block';
+                nextSection.classList.remove('hidden');
+                anime({
+                    targets: nextSection,
+                    opacity: [0, 1],
+                    translateY: [10, 0],
+                    duration: 400,
+                    easing: 'easeOutQuad'
+                });
+            }
+        });
+    } else {
+        // First load fallback
+        Object.values(modes).forEach(m => {
+            m.section.style.display = 'none';
+            m.section.classList.add('hidden');
+        });
+        nextSection.style.display = 'block';
+        nextSection.classList.remove('hidden');
     }
 }
 
@@ -97,9 +130,8 @@ uploadArea.addEventListener("click", () => {
 fileInput.addEventListener("change", async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
     await uploadDocument(file);
-    fileInput.value = ""; // Reset input
+    fileInput.value = "";
 });
 
 // Paste Text Process
@@ -109,8 +141,7 @@ processTextBtn.addEventListener("click", async () => {
         showError("Please enter some text to analyze");
         return;
     }
-
-    await processPastedText(text, "Pasted_Agremeent.txt");
+    await processPastedText(text, "Pasted_Agreement.txt");
 });
 
 // Analyze Current Tab
@@ -120,34 +151,23 @@ processTabBtn.addEventListener("click", async () => {
 
     try {
         if (!chrome.scripting) {
-            throw new Error("Scripting API not available. Please reload the extension in chrome://extensions to enable new permissions.");
+            throw new Error("Scripting API missing. Please reload extension.");
         }
 
         const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (!tab) throw new Error("No active tab found");
 
-        if (!tab) {
-            throw new Error("No active tab found");
-        }
-
-        // Execute script to get text
         const result = await chrome.scripting.executeScript({
             target: { tabId: tab.id },
-            func: () => {
-                // Get visible text, basic cleanup
-                return document.body.innerText;
-            }
+            func: () => document.body.innerText
         });
 
-        if (!result || !result[0] || !result[0].result) {
-            throw new Error("Failed to extract text from page");
-        }
+        if (!result || !result[0] || !result[0].result) throw new Error("Failed to extract text");
 
         const pageText = result[0].result;
         const pageTitle = tab.title || "Webpage_Content.txt";
 
-        if (pageText.length < 100) {
-            throw new Error("Page content is too short to analyze.");
-        }
+        if (pageText.length < 100) throw new Error("Page content is too short to analyze.");
 
         await processPastedText(pageText, pageTitle);
 
@@ -158,26 +178,26 @@ processTabBtn.addEventListener("click", async () => {
     }
 });
 
-
-// Drag and Drop
+// Drag and Drop Animations
 uploadArea.addEventListener("dragover", (e) => {
     e.preventDefault();
-    uploadArea.style.borderColor = "rgba(255, 215, 0, 0.8)";
+    anime({ targets: uploadArea, scale: 1.02, borderColor: '#fbbf24', duration: 200, easing: 'easeOutQuad' });
 });
 
 uploadArea.addEventListener("dragleave", () => {
-    uploadArea.style.borderColor = "rgba(255, 215, 0, 0.3)";
+    anime({ targets: uploadArea, scale: 1, borderColor: 'rgba(148, 163, 184, 0.2)', duration: 200, easing: 'easeOutQuad' });
 });
 
 uploadArea.addEventListener("drop", async (e) => {
     e.preventDefault();
-    uploadArea.style.borderColor = "rgba(255, 215, 0, 0.3)";
+    anime({ targets: uploadArea, scale: 1, borderColor: 'rgba(148, 163, 184, 0.2)', duration: 200, easing: 'easeOutQuad' });
 
     const file = e.dataTransfer.files[0];
     if (file && (file.name.endsWith('.pdf') || file.name.endsWith('.txt'))) {
         await uploadDocument(file);
     } else {
         showError("Please drop a PDF or TXT file");
+        anime({ targets: uploadArea, translateX: [0, -10, 10, -10, 10, 0], duration: 400, easing: 'easeInOutSine' });
     }
 });
 
@@ -186,113 +206,66 @@ async function processPastedText(text, filename = "Pasted_Agreement.txt") {
     hideError();
     setLoading(true, "Processing text...");
 
-    // Clear previous analysis
-    riskDashboard.style.display = 'none';
+    // Anime out risk dashboard if visible
+    if (riskDashboard.style.display !== 'none') {
+        anime({ targets: riskDashboard, opacity: 0, translateY: 10, duration: 300, complete: () => riskDashboard.style.display = 'none' });
+    }
     chrome.storage.local.remove(['analysisData']);
 
     try {
         const response = await fetch(`${API_URL}/upload_text`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                text: text,
-                filename: filename
-            })
+            body: JSON.stringify({ text: text, filename: filename })
         });
-
         const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.detail || "Processing failed");
-        }
+        if (!response.ok) throw new Error(data.detail || "Processing failed");
 
         currentDocumentId = data.document_id;
         currentFilename = data.filename;
 
-        // Save to storage
-        chrome.storage.local.set({
-            documentId: currentDocumentId,
-            filename: currentFilename
-        });
+        chrome.storage.local.set({ documentId: currentDocumentId, filename: currentFilename });
 
         updateUIAfterUpload(data.filename, `${data.num_chunks} sections analyzed`);
-        analyzeBtn.style.display = 'block';
+        analyzeBtn.style.display = 'flex'; // Use flex for centering
         addMessage(`Text processed successfully! You can now analyze risks.`, "bot");
-
-        // Switch back to upload mode view generally or just hide paste area?
-        // Let's hide the input area to show result is loaded
         pasteText.value = "";
 
-    } catch (err) {
-        console.error("Text process error:", err);
-        let errorMessage = "Failed to process text.";
-
-        if (err.message.includes("Failed to fetch")) {
-            errorMessage = "Server not running! Please start the backend server.";
-        } else if (err.message) {
-            errorMessage = err.message;
-        }
-
-        showError(errorMessage);
-    } finally {
-        setLoading(false);
-    }
+    } catch (err) { handleApiError(err, "Failed to process text."); }
+    finally { setLoading(false); }
 }
 
-// Upload Document Function
+// Upload Document
 async function uploadDocument(file) {
     hideError();
-    setLoading(true, "Uploading and processing document...");
+    setLoading(true, "Uploading document...");
 
-    // Clear previous analysis
-    riskDashboard.style.display = 'none';
+    if (riskDashboard.style.display !== 'none') {
+        riskDashboard.style.display = 'none';
+    }
     chrome.storage.local.remove(['analysisData']);
 
     const formData = new FormData();
     formData.append("file", file);
 
     try {
-        const response = await fetch(`${API_URL}/upload`, {
-            method: "POST",
-            body: formData
-        });
-
+        const response = await fetch(`${API_URL}/upload`, { method: "POST", body: formData });
         const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.detail || "Upload failed");
-        }
+        if (!response.ok) throw new Error(data.detail || "Upload failed");
 
         currentDocumentId = data.document_id;
         currentFilename = data.filename;
-
-        // Save to storage
-        chrome.storage.local.set({
-            documentId: currentDocumentId,
-            filename: currentFilename
-        });
+        chrome.storage.local.set({ documentId: currentDocumentId, filename: currentFilename });
 
         updateUIAfterUpload(data.filename, `${data.num_chunks} sections analyzed`);
-        analyzeBtn.style.display = 'block'; // Show analyze button
-        addMessage(`Document "${data.filename}" uploaded successfully! You can now ask questions or run a risk analysis.`, "bot");
+        analyzeBtn.style.display = 'flex';
+        addMessage(`Document "${data.filename}" uploaded! You can now run a risk analysis.`, "bot");
 
-    } catch (err) {
-        console.error("Upload error:", err);
-        let errorMessage = "Failed to upload document.";
-
-        if (err.message.includes("Failed to fetch")) {
-            errorMessage = "Server not running! Please start the backend server on port 8000.";
-        } else if (err.message) {
-            errorMessage = err.message;
-        }
-
-        showError(errorMessage);
-    } finally {
-        setLoading(false);
-    }
+    } catch (err) { handleApiError(err, "Failed to upload document."); }
+    finally { setLoading(false); }
 }
 
-// Analyze Risk Button Click
+// Analyze Risk
 analyzeBtn.addEventListener("click", async () => {
     if (!currentDocumentId) return;
 
@@ -304,34 +277,19 @@ analyzeBtn.addEventListener("click", async () => {
         const response = await fetch(`${API_URL}/analyze_risk`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                document_id: currentDocumentId,
-                question: "start_analysis" // Dummy value
-            })
+            body: JSON.stringify({ document_id: currentDocumentId, question: "start_analysis" })
         });
 
         const data = await response.json();
+        if (!response.ok) throw new Error(data.detail || "Analysis failed");
 
-        if (!response.ok) {
-            throw new Error(data.detail || "Analysis failed");
-        }
-
-        // Display results
         displayRiskAnalysis(data);
-
-        // Save analysis to storage
-        chrome.storage.local.set({
-            analysisData: {
-                documentId: currentDocumentId,
-                data: data
-            }
-        });
-
+        chrome.storage.local.set({ analysisData: { documentId: currentDocumentId, data: data } });
         addMessage("📊 Risk analysis complete! Check the dashboard above.", "bot");
 
     } catch (err) {
         console.error("Analysis error:", err);
-        showError("Failed to complete risk analysis. " + err.message);
+        showError("Failed to complete analysis. " + err.message);
     } finally {
         setLoading(false);
         analyzeBtn.disabled = false;
@@ -342,15 +300,28 @@ function displayRiskAnalysis(data) {
     if (!data) return;
 
     riskDashboard.style.display = "block";
-    analyzeBtn.style.display = "none"; // Hide button after analysis
+    riskDashboard.style.opacity = 0;
 
-    // Update Gauge
-    // Map 0-100 to rotation: -45deg (0%) to 135deg (100%)
+    anime({
+        targets: riskDashboard,
+        opacity: [0, 1],
+        translateY: [20, 0],
+        duration: 600,
+        easing: 'easeOutExpo'
+    });
+
+    analyzeBtn.style.display = "none";
+
+    // Gauge Animation
     const degree = (data.risk_score / 100) * 180 - 45;
-    gaugeFill.style.transform = `rotate(${degree}deg)`;
+    anime({
+        targets: gaugeFill,
+        rotate: [-45, degree],
+        duration: 2000,
+        easing: 'easeOutElastic(1, .5)'
+    });
 
-    // Set color based on score
-    let color = "#22c55e"; // Green
+    let color = "#10b981"; // Green
     if (data.risk_score > 40) color = "#f59e0b"; // Orange
     if (data.risk_score > 70) color = "#ef4444"; // Red
 
@@ -358,51 +329,63 @@ function displayRiskAnalysis(data) {
     gaugeFill.style.borderLeftColor = color;
     riskScore.style.color = color;
 
-    // Animate score number
-    animateValue(riskScore, 0, data.risk_score, 1500);
+    // Count Up Animation
+    let scoreObj = { val: 0 };
+    anime({
+        targets: scoreObj,
+        val: data.risk_score,
+        round: 1,
+        duration: 1500,
+        easing: 'easeOutExpo',
+        update: () => riskScore.innerHTML = scoreObj.val + "%"
+    });
 
     riskLevelLabel.textContent = data.risk_level;
-
-    // Render detailed analysis
     detailedAnalysis.textContent = data.detailed_analysis;
 
-    // Render Key Risks
+    // Render Key Risks with Stagger
     keyRisksList.innerHTML = "";
-    data.key_risks.forEach(risk => {
+    data.key_risks.forEach((risk, i) => {
         const div = document.createElement("div");
         div.className = `risk-item ${risk.severity.toLowerCase()}`;
+        div.style.opacity = 0; // Prepare for stagger
         div.innerHTML = `
       <div class="risk-title">${risk.title} <span class="status-badge" style="font-size: 9px; margin-left:6px; background:rgba(255,255,255,0.1)">${risk.severity}</span></div>
       <div class="risk-desc">${risk.description}</div>
     `;
         keyRisksList.appendChild(div);
     });
-}
 
-function animateValue(obj, start, end, duration) {
-    let startTimestamp = null;
-    const step = (timestamp) => {
-        if (!startTimestamp) startTimestamp = timestamp;
-        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-        obj.innerHTML = Math.floor(progress * (end - start) + start) + "%";
-        if (progress < 1) {
-            window.requestAnimationFrame(step);
-        }
-    };
-    window.requestAnimationFrame(step);
+    anime({
+        targets: '.risk-item',
+        opacity: [0, 1],
+        translateX: [20, 0],
+        delay: anime.stagger(100),
+        duration: 800,
+        easing: 'easeOutQuad'
+    });
 }
 
 // Update UI After Upload
 function updateUIAfterUpload(filename, stats) {
     docName.textContent = filename;
     docStats.textContent = stats;
-    docInfo.style.display = "block";
-    analyzeBtn.style.display = "block";
 
+    docInfo.style.display = "block";
+    anime({ targets: docInfo, opacity: [0, 1], translateY: [-10, 0], duration: 400, easing: 'easeOutQuad' });
+
+    analyzeBtn.style.display = "flex";
     askBtn.disabled = false;
     btnText.textContent = "Ask Question";
 
-    uploadArea.querySelector('.upload-text').textContent = "Upload New Document";
+    // Smoothly update text
+    const uploadText = uploadArea.querySelector('.upload-text');
+    uploadText.style.opacity = 0;
+    setTimeout(() => {
+        uploadText.textContent = "Upload New Document";
+        uploadText.style.opacity = 1;
+    }, 200);
+
     uploadArea.querySelector('.upload-hint').textContent = "Current: " + filename;
 }
 
@@ -410,29 +393,40 @@ function updateUIAfterUpload(filename, stats) {
 deleteBtn.addEventListener("click", async () => {
     if (!currentDocumentId) return;
 
-    try {
-        await fetch(`${API_URL}/documents/${currentDocumentId}`, {
-            method: "DELETE"
-        });
+    // Click animation
+    anime({ targets: deleteBtn, scale: [0.95, 1], duration: 100 });
 
-        // Clear state
+    try {
+        await fetch(`${API_URL}/documents/${currentDocumentId}`, { method: "DELETE" });
         currentDocumentId = null;
         currentFilename = null;
         chrome.storage.local.remove(['documentId', 'filename', 'analysisData']);
 
-        // Reset UI
-        docInfo.style.display = "none";
-        riskDashboard.style.display = "none";
+        // Animate elements out
+        anime({
+            targets: [docInfo, riskDashboard],
+            opacity: 0,
+            scale: 0.95,
+            duration: 300,
+            easing: 'easeInQuad',
+            complete: () => {
+                docInfo.style.display = "none";
+                riskDashboard.style.display = "none";
+                // Reset styles
+                docInfo.style.opacity = 1;
+                docInfo.style.scale = 1;
+                riskDashboard.style.opacity = 1;
+                riskDashboard.style.scale = 1;
+            }
+        });
+
         askBtn.disabled = true;
         btnText.textContent = "Upload Document First";
         uploadArea.querySelector('.upload-text').textContent = "Click to Upload Agreement";
         uploadArea.querySelector('.upload-hint').textContent = "PDF or TXT files accepted";
         chatDiv.innerHTML = "";
-
-        // Reset gauge
         gaugeFill.style.transform = `rotate(-45deg)`;
-
-        addMessage("Document removed. Upload a new document to continue.", "bot");
+        addMessage("Document removed.", "bot");
 
     } catch (err) {
         console.error("Delete error:", err);
@@ -443,64 +437,33 @@ deleteBtn.addEventListener("click", async () => {
 // Ask Question
 askBtn.addEventListener("click", async () => {
     const question = questionInput.value.trim();
-
     hideError();
 
-    if (!question) {
-        showError("Please enter a question");
-        return;
-    }
-
-    if (!currentDocumentId) {
-        showError("Please upload a document first");
+    if (!question || !currentDocumentId) {
+        showError(question ? "Please upload a document first" : "Please enter a question");
+        anime({ targets: question ? uploadArea : questionInput, translateX: [0, -5, 5, 0], duration: 300 });
         return;
     }
 
     addMessage(question, "user");
     questionInput.value = "";
-    setLoading(true, "Analyzing legal document...");
+    setLoading(true, "Thinking...");
 
     try {
         const response = await fetch(`${API_URL}/ask`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                document_id: currentDocumentId,
-                question: question
-            })
+            body: JSON.stringify({ document_id: currentDocumentId, question: question })
         });
-
         const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.detail || "Failed to get answer");
-        }
+        if (!response.ok) throw new Error(data.detail || "Failed to get answer");
 
         addMessage(data.answer, "bot");
 
-    } catch (err) {
-        console.error("Question error:", err);
-        let errorMessage = "Failed to process question.";
-
-        if (err.message.includes("Failed to fetch")) {
-            errorMessage = "Server not running! Please start the backend server.";
-        } else if (err.message.includes("Document not found")) {
-            errorMessage = "Document expired. Please re-upload.";
-            currentDocumentId = null;
-            chrome.storage.local.remove(['documentId', 'filename']);
-        } else if (err.message) {
-            errorMessage = err.message;
-        }
-
-        showError(errorMessage);
-        addMessage(`Error: ${errorMessage}`, "bot");
-
-    } finally {
-        setLoading(false);
-    }
+    } catch (err) { handleApiError(err, "Failed to process question."); }
+    finally { setLoading(false); }
 });
 
-// Enter to Ask
 questionInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
@@ -513,22 +476,47 @@ function addMessage(text, type) {
     const msg = document.createElement("div");
     msg.className = `msg ${type}`;
     msg.innerText = text;
+    msg.style.opacity = 0;
+    msg.style.transform = 'translateY(10px)';
+
     chatDiv.appendChild(msg);
     chatDiv.scrollTop = chatDiv.scrollHeight;
+
+    anime({
+        targets: msg,
+        opacity: 1,
+        translateY: 0,
+        duration: 400,
+        easing: 'easeOutQuad'
+    });
 }
 
 function setLoading(isLoading, text = "Processing...") {
     askBtn.disabled = isLoading || !currentDocumentId;
     statusDiv.style.display = isLoading ? "block" : "none";
-    statusDiv.innerText = isLoading ? text : "";
+    statusDiv.innerText = text;
+
+    if (isLoading) {
+        anime({ targets: statusDiv, opacity: [0.5, 1], loop: true, direction: 'alternate', duration: 800 });
+    } else {
+        anime.remove(statusDiv);
+    }
 }
 
 function showError(message) {
     errorDiv.style.display = "block";
     errorDiv.innerText = message;
+    anime({ targets: errorDiv, translateX: [0, -5, 5, -5, 5, 0], duration: 400 });
 }
 
 function hideError() {
     errorDiv.style.display = "none";
-    errorDiv.innerText = "";
+}
+
+function handleApiError(err, defaultMsg) {
+    console.error(err);
+    let msg = defaultMsg;
+    if (err.message.includes("Failed to fetch")) msg = "Server not running! Please start the backend.";
+    else if (err.message) msg = err.message;
+    showError(msg);
 }

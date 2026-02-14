@@ -7,13 +7,24 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
         :root {
+            /* Premium Trustworthy Palette */
             --bg-dark: #0f172a;
-            --glass-bg: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --glass-hover: rgba(255, 255, 255, 0.08);
+            /* Deep Navy - Professional */
+            --bg-content: #1e293b;
+            /* Slate - Clean */
+            --glass-bg: rgba(30, 41, 59, 0.6);
+            --glass-border: rgba(148, 163, 184, 0.15);
+            /* Platinum border */
+            --glass-hover: rgba(30, 41, 59, 0.8);
+
             --primary-gradient: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
-            --text-primary: #ffffff;
+            /* Gold/Amber for trusted highlights only */
+            --accent-blue: #3b82f6;
+            /* Trust Blue for links/info */
+
+            --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
+
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
@@ -36,31 +47,34 @@
             position: relative;
         }
 
-        /* Abstract Background Orbs */
+        /* Abstract Background Orbs - More Subtle */
         .orb {
             position: fixed;
             border-radius: 50%;
-            filter: blur(80px);
+            filter: blur(100px);
             z-index: -1;
-            opacity: 0.5;
-            animation: orbFloat 10s ease-in-out infinite alternate;
+            opacity: 0.25;
+            /* Reduced opacity for professionalism */
         }
 
         .orb-1 {
-            width: 300px;
-            height: 300px;
-            background: #4f46e5;
-            top: -100px;
+            width: 400px;
+            height: 400px;
+            background: #1e3a8a;
+            /* Deep Blue */
+            top: -150px;
             left: -100px;
+            animation: orbFloat 15s ease-in-out infinite alternate;
         }
 
         .orb-2 {
-            width: 250px;
-            height: 250px;
-            background: #be185d;
+            width: 300px;
+            height: 300px;
+            background: #4f46e5;
+            /* Indigo */
             bottom: -50px;
             right: -50px;
-            animation-delay: -5s;
+            animation: orbFloat 12s ease-in-out infinite alternate-reverse;
         }
 
         @keyframes orbFloat {
@@ -69,7 +83,7 @@
             }
 
             100% {
-                transform: translate(30px, 30px);
+                transform: translate(40px, 40px);
             }
         }
 
@@ -77,11 +91,16 @@
             padding: 24px;
             position: relative;
             z-index: 1;
-            background: rgba(15, 23, 42, 0.6);
-            /* Tint over orbs */
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             min-height: 600px;
+        }
+
+        /* Smooth Entry for all elements */
+        .stagger-entry {
+            opacity: 0;
+            transform: translateY(10px);
         }
 
         /* Header */
@@ -89,18 +108,19 @@
             text-align: center;
             margin-bottom: 32px;
             position: relative;
+            padding-top: 10px;
         }
 
         .logo-icon svg {
-            filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.4));
+            filter: drop-shadow(0 0 20px rgba(251, 191, 36, 0.25));
         }
 
         h1 {
             font-size: 24px;
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             letter-spacing: -0.5px;
-            background: linear-gradient(to right, #ffffff, #cbd5e1);
+            background: linear-gradient(to right, #f8fafc, #94a3b8);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -110,27 +130,29 @@
             font-size: 13px;
             color: var(--text-secondary);
             font-weight: 500;
+            letter-spacing: 0.3px;
         }
 
-        /* Glass Cards Common */
+        /* Premium Glass Cards */
         .glass-panel {
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
-            border-radius: 24px;
+            border-radius: 20px;
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
-        /* Toggle Switch */
+        /* Toggle Switch - Premium Styles */
         .toggle-container {
             display: flex;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 4px;
-            border-radius: 16px;
+            background: rgba(15, 23, 42, 0.6);
+            padding: 6px;
+            border-radius: 18px;
             margin-bottom: 24px;
             border: 1px solid var(--glass-border);
+            position: relative;
         }
 
         .toggle-btn {
@@ -142,49 +164,60 @@
             font-size: 12px;
             font-weight: 600;
             cursor: pointer;
-            border-radius: 12px;
-            transition: all 0.3s ease;
+            border-radius: 14px;
+            transition: color 0.3s ease;
+            position: relative;
+            z-index: 2;
         }
 
+        /* Active pill background handled by JS usually, but here CSS works too */
         .toggle-btn.active {
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
+            color: #f8fafc;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.08);
+            /* Fallback */
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
         .toggle-btn:hover:not(.active) {
-            color: #fff;
+            color: #e2e8f0;
         }
 
         /* Upload Area */
         .upload-area {
-            border: 2px dashed rgba(255, 255, 255, 0.15);
-            border-radius: 24px;
-            padding: 40px 20px;
+            border: 2px dashed rgba(148, 163, 184, 0.2);
+            border-radius: 20px;
+            padding: 48px 24px;
             text-align: center;
-            background: var(--glass-bg);
-            transition: all 0.3s ease;
+            background: rgba(30, 41, 59, 0.3);
+            transition: all 0.4s ease;
             cursor: pointer;
             position: relative;
             overflow: hidden;
         }
 
         .upload-area:hover {
-            border-color: rgba(251, 191, 36, 0.5);
-            background: var(--glass-hover);
-            transform: translateY(-2px);
+            border-color: rgba(251, 191, 36, 0.4);
+            background: rgba(30, 41, 59, 0.5);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
         }
 
         .upload-icon {
             color: #fbbf24;
-            margin-bottom: 16px;
-            filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.3));
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.2));
+            transition: transform 0.4s ease;
+        }
+
+        .upload-area:hover .upload-icon {
+            transform: scale(1.1);
         }
 
         .upload-text {
             font-size: 15px;
             font-weight: 600;
-            color: #fff;
+            color: #f8fafc;
             margin-bottom: 8px;
         }
 
@@ -193,72 +226,77 @@
             color: var(--text-secondary);
         }
 
-        /* Text Areas */
+        /* Inputs */
         textarea {
             width: 100%;
             padding: 16px;
-            border-radius: 20px;
+            border-radius: 16px;
             border: 1px solid var(--glass-border);
-            background: rgba(0, 0, 0, 0.2);
-            color: #fff;
+            background: rgba(15, 23, 42, 0.4);
+            color: #f8fafc;
             font-family: inherit;
             font-size: 13px;
             resize: none;
             outline: none;
             transition: all 0.3s ease;
+            line-height: 1.5;
         }
 
         textarea:focus {
-            border-color: rgba(251, 191, 36, 0.5);
-            background: rgba(0, 0, 0, 0.3);
-            box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.1);
+            border-color: rgba(251, 191, 36, 0.4);
+            background: rgba(15, 23, 42, 0.6);
+            box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.05);
         }
 
-        /* Action Buttons */
+        /* Buttons */
         .process-btn,
         .analyze-btn,
         .ask-btn {
             width: 100%;
-            padding: 14px;
+            padding: 16px;
             border-radius: 16px;
             border: none;
             cursor: pointer;
             font-weight: 600;
             font-size: 14px;
-            transition: all 0.3s ease;
+            letter-spacing: 0.3px;
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
             position: relative;
             overflow: hidden;
-            margin-top: 12px;
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .process-btn,
         .analyze-btn {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
             color: #fbbf24;
-            border: 1px solid rgba(251, 191, 36, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .process-btn:hover,
         .analyze-btn:hover {
-            background: rgba(251, 191, 36, 0.15);
-            border-color: rgba(251, 191, 36, 0.4);
-            transform: translateY(-1px);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #fbbf24;
+            transform: translateY(-2px);
         }
 
         .ask-btn {
             background: var(--primary-gradient);
             color: #fff;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-            box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
+            box-shadow: 0 4px 16px rgba(217, 119, 6, 0.25);
         }
 
         .ask-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(217, 119, 6, 0.4);
+            box-shadow: 0 8px 25px rgba(217, 119, 6, 0.4);
         }
 
         .ask-btn:active {
-            transform: translateY(0);
+            transform: scale(0.98);
         }
 
         /* Doc Info Card */
@@ -642,6 +680,8 @@
     </div>
 
     <!-- Script included at the end -->
+    <!-- Scripts -->
+    <script src="anime.min.js"></script>
     <script src="popup.js"></script>
 </body>
 
