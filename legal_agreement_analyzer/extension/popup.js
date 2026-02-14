@@ -181,16 +181,16 @@ processTabBtn.addEventListener("click", async () => {
 // Drag and Drop Animations
 uploadArea.addEventListener("dragover", (e) => {
     e.preventDefault();
-    anime({ targets: uploadArea, scale: 1.02, borderColor: '#7c3aed', duration: 200, easing: 'easeOutQuad' });
+    anime({ targets: uploadArea, scale: 1.02, borderColor: '#8b5cf6', duration: 200, easing: 'easeOutQuad' });
 });
 
 uploadArea.addEventListener("dragleave", () => {
-    anime({ targets: uploadArea, scale: 1, borderColor: 'rgba(124, 58, 237, 0.25)', duration: 200, easing: 'easeOutQuad' });
+    anime({ targets: uploadArea, scale: 1, borderColor: 'rgba(139, 92, 246, 0.3)', duration: 200, easing: 'easeOutQuad' });
 });
 
 uploadArea.addEventListener("drop", async (e) => {
     e.preventDefault();
-    anime({ targets: uploadArea, scale: 1, borderColor: 'rgba(124, 58, 237, 0.25)', duration: 200, easing: 'easeOutQuad' });
+    anime({ targets: uploadArea, scale: 1, borderColor: 'rgba(139, 92, 246, 0.3)', duration: 200, easing: 'easeOutQuad' });
 
     const file = e.dataTransfer.files[0];
     if (file && (file.name.endsWith('.pdf') || file.name.endsWith('.txt'))) {
