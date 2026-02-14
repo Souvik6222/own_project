@@ -1,4 +1,4 @@
-<![CDATA[<div align="center">
+<div align="center">
 
 <h1>🚀 AI-Powered Chrome Extensions Portfolio</h1>
 
@@ -210,4 +210,4 @@ All projects are licensed under the **MIT License** — feel free to study, modi
 *From contract analysis to video Q&A to voice assistants — powered by cutting-edge AI.*
 
 </div>
-]]>
+

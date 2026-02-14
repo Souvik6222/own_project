@@ -1,4 +1,3 @@
-<![CDATA[<div align="center">
 
 <h1>⚖️ Legal Agreement Analyzer</h1>
 
@@ -453,4 +452,3 @@ This project is licensed under the **MIT License** — feel free to modify and u
 *Understand any contract in seconds — powered by AI.*
 
 </div>
-]]>

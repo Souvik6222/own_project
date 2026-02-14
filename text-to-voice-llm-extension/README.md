@@ -1,4 +1,3 @@
-<![CDATA[<div align="center">
 
 <h1>🎙️ Text-to-Voice LLM Extension</h1>
 
@@ -213,4 +212,3 @@ MIT License — feel free to modify and use for your own projects.
 *Your local AI voice assistant — select, process, listen.*
 
 </div>
-]]>

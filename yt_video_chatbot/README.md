@@ -1,4 +1,3 @@
-<![CDATA[<div align="center">
 
 <h1>🎬 YouTube RAG Assistant</h1>
 
@@ -267,4 +266,3 @@ MIT License — feel free to modify and use for your own projects.
 *Ask a video anything — powered by RAG + Gemini AI.*
 
 </div>
-]]>
