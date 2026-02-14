@@ -102,6 +102,7 @@
             letter-spacing: -0.5px;
             background: linear-gradient(to right, #ffffff, #cbd5e1);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
@@ -355,6 +356,7 @@
             font-weight: 800;
             background: var(--primary-gradient);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
             line-height: 1;
         }
@@ -513,7 +515,7 @@
 
         /* Utility */
         .hidden {
-            display: none !important;
+            display: none;
         }
     </style>
 </head>
@@ -543,6 +545,13 @@
             <button class="toggle-btn active" id="modeUpload">Upload File</button>
             <button class="toggle-btn" id="modePaste">Paste Text</button>
             <button class="toggle-btn" id="modeTab">Current Tab</button>
+        </div>
+
+        <!-- Status & Error Messages (Moved here to be always visible) -->
+        <div id="status" class="status-msg"
+            style="display: none; color: #fbbf24; text-align: center; margin-bottom: 10px; font-size: 13px;"></div>
+        <div id="error" class="error-msg"
+            style="display: none; color: #fca5a5; text-align: center; margin-bottom: 10px; font-size: 13px; background: rgba(239, 68, 68, 0.1); padding: 8px; border-radius: 8px;">
         </div>
 
         <!-- Upload Section -->
@@ -612,13 +621,6 @@
             <div style="text-align: center; margin-bottom: 20px; color: var(--text-primary); font-weight: 600;"
                 id="riskLevel">Calculating...</div>
 
-            <!-- Status & Error Messages -->
-            <div id="status" class="status-msg"
-                style="display: none; color: #fbbf24; text-align: center; margin-bottom: 10px; font-size: 13px;"></div>
-            <div id="error" class="error-msg"
-                style="display: none; color: #fca5a5; text-align: center; margin-bottom: 10px; font-size: 13px; background: rgba(239, 68, 68, 0.1); padding: 8px; border-radius: 8px;">
-            </div>
-
             <!-- Detailed Analysis (Ready for JS to populate) -->
             <div id="detailedAnalysis" style="display: none;"></div>
 
@@ -626,18 +628,17 @@
                 <h3>Key Risk Points</h3>
                 <div id="keyRisksList"></div>
             </div>
-
-            <!-- Q&A Section -->
-            <div class="chat-container">
-                <textarea id="question" placeholder="Ask a question about this agreement..." rows="2"
-                    style="margin-bottom: 8px;"></textarea>
-                <button class="ask-btn" id="askBtn"><span id="btnText">Ask AI Assistant</span></button>
-                <div class="chat-messages" id="chat">
-                    <!-- Messages will appear here -->
-                </div>
-            </div>
         </div>
 
+        <!-- Q&A Section -->
+        <div class="chat-container">
+            <textarea id="question" placeholder="Ask a question about this agreement..." rows="2"
+                style="margin-bottom: 8px;"></textarea>
+            <button class="ask-btn" id="askBtn"><span id="btnText">Ask AI Assistant</span></button>
+            <div class="chat-messages" id="chat">
+                <!-- Messages will appear here -->
+            </div>
+        </div>
     </div>
 
     <!-- Script included at the end -->
